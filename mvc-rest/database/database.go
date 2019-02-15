@@ -15,6 +15,6 @@ func InitDB() {
 	if err != nil {
 		panic(err.Error)
 	}
-	fmt.Println("DB Object created")
+	fmt.Println("DB Object created2")
 	fmt.Println(Db)
 }
