@@ -7,6 +7,8 @@ import (
 	_ "mvc-rest/database"
 	"mvc-rest/model"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 var users []model.User
@@ -39,4 +41,26 @@ func AllUsers(w http.ResponseWriter, r *http.Request) {
 
 func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Home Page endPoinHit")
+}
+func GetUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Get user invoked")
+	params := mux.Vars(r)
+	user, err := database.Db.Query("SELECT id, name FROM users where id = ", params["id"])
+	fmt.Println(params["id"])
+	defer user.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+	if user != nil {
+		var id int
+		var name string
+		err := user.Scan(&id, &name)
+		if err != nil {
+			panic(err.Error())
+		} else {
+			userData := model.User{id, name}
+			fmt.Println(id, name)
+			json.NewEncoder(w).Encode(userData)
+		}
+	}
 }
