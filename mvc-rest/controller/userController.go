@@ -62,3 +62,50 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func Insert(w http.ResponseWriter, r *http.Request) {
+	nId := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	newUser, err := database.Db.Prepare("Insert into users(id, name) values(?, ?)")
+	defer newUser.Close()
+	if err != nil {
+		fmt.Println(err)
+		fmt.Fprint(w, "Params Invalid")
+	}
+	if newUser != nil {
+		newUser.Exec(nId, name)
+		fmt.Println("Record inserted")
+		fmt.Fprint(w, "Records inserted")
+	}
+}
+
+func Update(w http.ResponseWriter, r *http.Request) {
+	nId := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	updated, err := database.Db.Prepare("Update users set name=? where id = ?")
+	if err != nil {
+		fmt.Println(err)
+		fmt.Fprint(w, "Params Invalid")
+	}
+
+	if updated != nil {
+		updated.Exec(name, nId)
+		fmt.Println("Record updated")
+		fmt.Fprint(w, "Records updated")
+	}
+}
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	nId := r.URL.Query().Get("id")
+	deleted, err := database.Db.Prepare("Delete from users where id=?")
+	if err != nil {
+		fmt.Println(err)
+		fmt.Fprint(w, "Params Invalid")
+	}
+
+	if deleted != nil {
+		deleted.Exec(nId)
+		fmt.Println("Record deleted")
+		fmt.Fprint(w, "Record deleted")
+	}
+}
