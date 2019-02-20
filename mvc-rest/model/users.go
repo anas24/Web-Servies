@@ -30,6 +30,7 @@ func AllUsers(w http.ResponseWriter, r *http.Request) interface{} {
 		defer allUsers.Close()
 		left := strconv.Itoa((pagNoInt - 1) * pageSizeInt)
 		right := strconv.Itoa(pageSizeInt)
+
 		if err != nil {
 			fmt.Println(err)
 			return ErrorMessage
@@ -52,7 +53,11 @@ func AllUsers(w http.ResponseWriter, r *http.Request) interface{} {
 				fmt.Println(id, name)
 			}
 		}
-		return users
+		if users != nil {
+			return users
+		} else {
+			return InvalidParamsMessage
+		}
 	} else {
 		return InvalidParamsMessage
 	}
